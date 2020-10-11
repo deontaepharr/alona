@@ -81,7 +81,7 @@ class AlonaCellTypePred(AlonaClustering):
         if not data_norm.index.str.match('ENSMU').any() and \
            not data_norm.index.str.match('ENSG').any():
             return data_norm
-        if data_norm.index.str.match('^ENS(G|MUS)[0-9]+$').any():
+        if data_norm.index.str.match(r'^ENS(G|MUS(G){0,1})\d+$').any(): #refactored and works
             data_norm = data_norm.iloc[data_norm.index.isin(refs.index), :]
             refs = refs.iloc[refs.index.isin(data_norm.index), :]
             refs = refs.reindex(data_norm.index)
@@ -174,8 +174,8 @@ class AlonaCellTypePred(AlonaClustering):
         # restructure
         bucket = []
         for i, k in enumerate(ret):
-            _df = pd.DataFrame(k)
-            _df['cluster'] = [i]*len(k)
+            _df = pd.DataFrame(ret[k].to_list()) #refactored
+            _df['cluster'] = [i]*len(ret[k]) #refactored
             cols = _df.columns.tolist()
             _df = _df[cols[-1:]+cols[:-1]]
             bucket.append(_df)
